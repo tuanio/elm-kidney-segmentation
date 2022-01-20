@@ -83,6 +83,8 @@ gac.SetMaximumRMSError(config_gac['max_rmse'])
 gac.SetNumberOfIterations(config_gac['n_iters'])
 result = gac.Execute(binarizerOutput, gradientOutput)
 
+print("RMS Change: ", gac.GetRMSChange())
+print("Elapsed Iterations: ", gac.GetElapsedIterations())
 
 imshow(image, result)
 
