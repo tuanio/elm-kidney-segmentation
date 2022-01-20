@@ -1,0 +1,62 @@
+
+input:
+  # MRI | static
+  image_type: MRI
+  # image_type: static
+  data_path: data\phase2
+  # data_path: data\static\abdominal_2d.png
+
+output:
+  plot:
+    alpha: 0.75
+  mask_path: output\abdominal_2d\abdominal_2d_output.png
+  mha_path: output\abdominal_2d\abdominal_2d_output.mha
+
+3D:
+  view_idx: 13
+
+smoothing:
+  timestep: 0.0625 # 0.125 for 2D, 0.0625 for 3D
+  n_iters: 9
+  conductance_param: 10
+
+gradient_magnitude:
+  sigma: 0.5
+
+sigmoid:
+  min: 0.0
+  max: 10.0
+  alpha: -5
+  beta: 15
+
+fastmarching:
+  stopping_time: 10
+  list_seed:
+    - [103, 150, 13]
+    - [112, 136, 13]
+    - [103, 162, 13]
+    - [103, 155, 13]
+    - [98, 151, 13]
+    - [122, 135, 13]
+    - [98, 146, 13]
+    - [123, 135, 13]
+    - [95, 148, 13]
+    - [121, 144, 13]
+    - [100, 148, 13]
+    - [123, 137, 13]
+    - [97, 150, 13]
+    - [122, 156, 13]
+    - [122, 135, 13]
+
+binarizer:
+  lower_threshold: 0
+  upper_threshold: 1000
+  inside_value: 0
+  outside_value: 1
+
+gac:
+  propagation_scaling: 0.5
+  curvature_scaling: 1.0
+  advection_scaling: 0.5
+  max_rmse: 0.01
+  n_iters: 50
