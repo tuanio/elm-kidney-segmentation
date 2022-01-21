@@ -3,6 +3,7 @@ import yaml
 import matplotlib.pyplot as plt
 import sys
 import copy
+import seaborn as sns
 
 if len(sys.argv) < 2:
   sys.stdout.write(f"Usage: {sys.argv[0]} <ConfigPath>")
@@ -23,25 +24,31 @@ elif config_input['image_type'] == 'MRI':
 
 origin_data = sitk.GetArrayFromImage(image)
 
-print(sitk.GetArrayFromImage(image).shape)
-
 def imshow(mask, mask_title):
   # plot
   mask_data = sitk.GetArrayFromImage(mask)
 
   origin_data_draw = copy.deepcopy(origin_data)
   mask_data_draw = copy.deepcopy(mask_data)
-  if len(mask_data.shape) > 2:
-    origin_data_draw = origin_data_draw[configs['3D']['view_idx']]
-    mask_data_draw = mask_data_draw[configs['3D']['view_idx']]
-
-  fig, ax = plt.subplots(figsize=(12, 6), ncols=2)
-  ax[0].imshow(origin_data_draw)
-  ax[0].imshow(mask_data_draw, alpha=configs['output']['plot']['alpha'])
-  ax[0].set_title("Origin image with mask")
-  ax[1].imshow(mask_data_draw)
-  ax[1].set_title("Mask of " + mask_title)
-  plt.show()
+  if len(mask_data.shape) == 2:
+    fig, ax = plt.subplots(figsize=(14, 7), ncols=2)
+    ax[0].imshow(origin_data_draw)
+    ax[0].imshow(mask_data_draw, alpha=configs['output']['plot']['alpha'])
+    ax[0].set_title("Origin image with mask")
+    ax[1].imshow(mask_data_draw)
+    ax[1].set_title("Mask of " + mask_title)
+    fig.suptitle(f"Slice {configs['3D']['view_idx']}")
+    plt.show()
+  else:
+    for slice_idx in range(origin_data_draw.shape[0]):
+      fig, ax = plt.subplots(figsize=(14, 7), ncols=2)
+      ax[0].imshow(origin_data_draw[slice_idx])
+      ax[0].imshow(mask_data_draw[slice_idx], alpha=configs['output']['plot']['alpha'])
+      ax[0].set_title("Origin image with mask")
+      ax[1].imshow(mask_data_draw[slice_idx])
+      ax[1].set_title("Mask of " + mask_title)
+      fig.suptitle(f"Slice {slice_idx}")
+      plt.show()
 
 # backup pixelID
 pixelID = image.GetPixelID()
@@ -90,7 +97,7 @@ binarizerOutput = binarizer.Execute(fastMarchingOutput)
 # cast to origin type of image
 binarizerOutput = sitk.Cast(binarizerOutput, image.GetPixelID())
 
-imshow(binarizerOutput, "Fast Marching")
+# imshow(binarizerOutput, "Fast Marching")
 
 # geodesic active contour
 config_gac = configs['gac']
